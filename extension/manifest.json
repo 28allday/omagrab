@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Send to omagrab",
+  "version": "0.1.0",
+  "description": "Right-click a link, video, or page to download it with omagrab.",
+  "permissions": ["contextMenus", "scripting", "activeTab"],
+  "background": { "service_worker": "background.js" }
+}

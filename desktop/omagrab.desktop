@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=omagrab
+Comment=Download audio/video with yt-dlp
+Exec=xdg-terminal-exec omagrab
+Terminal=false
+Icon=folder-download
+Categories=AudioVideo;Utility;
+Keywords=yt-dlp;download;video;audio;
+StartupNotify=false

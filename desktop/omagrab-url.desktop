@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=omagrab (URL handler)
+Comment=Download a link with omagrab
+Exec=xdg-terminal-exec omagrab %u
+Terminal=false
+NoDisplay=true
+StartupNotify=false
+MimeType=x-scheme-handler/omagrab;
