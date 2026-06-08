@@ -9,20 +9,9 @@ URL, pick Audio or Video, and watch it download with live progress. Built with G
 > Wayland + `wl-clipboard`, and a Nerd Font terminal. There are no X11 /
 > non-Omarchy fallbacks.
 
-```
-                  omagrab
-
-           Audio       ▐ Video ▌
-
-   ▸ paste a URL and press enter…
-
-    ✓ Big Buck Bunny (1080p)          done
-     Sintel — Blender Open Movie   ████████░░  62%  4.2MiB/s
-    ○ another queued link               queued
-
-   tab audio/video · enter add · ↑↓ select · esc quit
-   empty box →  c config · d remove · q quit
-```
+<p align="center">
+  <img src="docs/screenshot.png" alt="omagrab TUI" width="700">
+</p>
 
 ## Features
 
