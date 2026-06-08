@@ -59,8 +59,8 @@ cd omagrab
 ./install.sh
 ```
 
-Make sure `~/.local/bin` is on your `PATH`. The installer also prints an optional
-`SUPER+SHIFT+V` clipboard keybind for you to add (see below).
+Make sure `~/.local/bin` is on your `PATH`. On Omarchy it also wires up the
+`SUPER+SHIFT+V` clipboard keybind (see below).
 
 ## Usage
 
@@ -87,25 +87,21 @@ In the config view: `↑↓` move, `←→` change a value, `Esc` saves and retu
 > Single-letter commands (`c`, `d`, `q`) only act when the URL box is empty — so
 > they never get swallowed while you're typing or pasting a link.
 
-## Clipboard keybind (optional)
+## Clipboard keybind
 
-The smoothest flow on Omarchy: copy a link in your browser, then summon omagrab as
-a floating window with the URL already filled in.
+The smoothest flow on Omarchy: **copy a link → `SUPER+SHIFT+V` → omagrab floats
+with the URL ready → `Tab` to pick mode → `Enter`.**
 
-The installer already added the floating window rule (`omagrab` floats small and
-centered however it's launched), so all you need is the keybind. Add to
-`~/.config/hypr/bindings.conf`:
+The installer sets this up for you — it adds the `SUPER+SHIFT+V` keybind to
+`~/.config/hypr/bindings.conf` and the floating window rule to
+`~/.config/hypr/windows.conf`, then reloads Hyprland. Both are written between
+clearly marked `omagrab` blocks (backed up first, never duplicated on re-run), so
+they're easy to find, tweak or remove.
 
-```ini
-bindd = SUPER SHIFT, V, omagrab, exec, xdg-terminal-exec --app-id=omagrab -e omagrab --clip
-```
-
-Reload Hyprland (`hyprctl reload`). Now: **copy a link → `SUPER+SHIFT+V` →
-omagrab floats with the URL ready → `Tab` to pick mode → `Enter`.**
-
-> Both the Walker entry and this keybind use the `omagrab` app-id, so the single
-> window rule the installer wrote to `~/.config/hypr/windows.conf` covers them
-> both. If you ever want to tweak the size, edit the `windowrule` block there.
+> If `SUPER+SHIFT+V` is already bound to something else, the installer leaves your
+> shortcut alone and prints the line for you to add under a different key. Both the
+> Walker entry and the keybind use the `omagrab` app-id, so the one window rule
+> covers every launch path — edit its `size` line in `windows.conf` to resize.
 
 ## Configuration
 

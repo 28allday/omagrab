@@ -164,14 +164,31 @@ EOF
     command -v hyprctl >/dev/null 2>&1 && hyprctl reload >/dev/null 2>&1 || true
   fi
 
-  cat <<EOF
-
-Optional clipboard keybind: copy a link, hit the key, and omagrab opens with the
-URL pre-filled (it already floats — the rule above covers it). Add to
-~/.config/hypr/bindings.conf:
-
-    bindd = SUPER SHIFT, V, omagrab, exec, xdg-terminal-exec --app-id=omagrab -e omagrab --clip
-EOF
+  # Add the clipboard keybind (SUPER+SHIFT+V), idempotently and backed up. Skip
+  # if that combo is already bound to something that isn't us, so we never stomp
+  # a user's existing shortcut.
+  bindings_conf="$HOME/.config/hypr/bindings.conf"
+  kb_begin="# >>> omagrab keybind begin"
+  kb_end="# <<< omagrab keybind end"
+  keybind_line="bindd = SUPER SHIFT, V, omagrab, exec, xdg-terminal-exec --app-id=omagrab -e omagrab --clip"
+  if [ -f "$bindings_conf" ] && grep -qF "$kb_begin" "$bindings_conf"; then
+    echo "    Clipboard keybind already present — left as-is."
+  elif [ -f "$bindings_conf" ] && grep -Eq '^[[:space:]]*bind[a-z]*[[:space:]]*=[[:space:]]*SUPER[[:space:]]+SHIFT[[:space:]]*,[[:space:]]*V[[:space:]]*,' "$bindings_conf"; then
+    warn "    SUPER+SHIFT+V is already bound to something else — skipping the keybind."
+    echo "    To use it anyway, add this line to ~/.config/hypr/bindings.conf yourself:"
+    echo "      $keybind_line"
+  else
+    mkdir -p "$(dirname "$bindings_conf")"
+    [ -f "$bindings_conf" ] && cp "$bindings_conf" "$bindings_conf.omagrab-bak"
+    {
+      printf '\n%s\n' "$kb_begin"
+      printf '# Copy a link, press SUPER+SHIFT+V — omagrab opens with the URL pre-filled.\n'
+      printf '%s\n' "$keybind_line"
+      printf '%s\n' "$kb_end"
+    } >> "$bindings_conf"
+    echo "    Added clipboard keybind: SUPER+SHIFT+V opens omagrab with the copied URL."
+    command -v hyprctl >/dev/null 2>&1 && hyprctl reload >/dev/null 2>&1 || true
+  fi
 fi
 
 case ":$PATH:" in
