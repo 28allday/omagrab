@@ -107,9 +107,10 @@ install -Dm755 "$TMPBIN" "$BIN"
 bold "Installed: $BIN"
 
 # ---- Omarchy desktop integration -----------------------------------------
-# Only on Omarchy: add a Walker entry that opens omagrab in a floating window.
-# The TUI.float app-id is matched by Omarchy's stock floating-window rule, so
-# no Hyprland configuration is required (same approach as tsplay / omarchy-send).
+# Only on Omarchy: add a Walker entry that opens omagrab, and a Hyprland window
+# rule so it floats small and centered. Both the Walker entry and the optional
+# clipboard keybind use the dedicated "omagrab" app-id, so this one rule covers
+# every launch path.
 if command -v omarchy-launch-tui >/dev/null 2>&1 || [ -d "$HOME/.local/share/omarchy" ]; then
   mkdir -p "$APP_DIR"
 
@@ -131,7 +132,7 @@ SVG
 [Desktop Entry]
 Name=omagrab
 Comment=yt-dlp TUI — paste a URL, pick Audio or Video, download
-Exec=xdg-terminal-exec --app-id=TUI.float -e $BIN
+Exec=xdg-terminal-exec --app-id=omagrab -e $BIN
 Icon=omagrab
 Terminal=false
 Type=Application
@@ -141,20 +142,35 @@ EOF
   bold "Omarchy detected — added floating Walker entry (with icon)."
   echo "    Launch it from Walker by searching 'omagrab'."
 
+  # Write a small floating window rule, idempotently, between markers we own so
+  # re-running the installer never duplicates it. Back the file up first.
+  windows_conf="$HOME/.config/hypr/windows.conf"
+  begin="# >>> omagrab windowrules begin"
+  end="# <<< omagrab windowrules end"
+  if [ -f "$windows_conf" ] && grep -qF "$begin" "$windows_conf"; then
+    echo "    Hyprland float rule already present — left as-is."
+  else
+    mkdir -p "$(dirname "$windows_conf")"
+    [ -f "$windows_conf" ] && cp "$windows_conf" "$windows_conf.omagrab-bak"
+    {
+      printf '\n%s\n' "$begin"
+      printf '# omagrab — small floating window, centered.\n'
+      printf 'windowrule = float on,     match:class ^(omagrab)$\n'
+      printf 'windowrule = center on,    match:class ^(omagrab)$\n'
+      printf 'windowrule = size 520 260, match:class ^(omagrab)$\n'
+      printf '%s\n' "$end"
+    } >> "$windows_conf"
+    echo "    Added floating window rule to ~/.config/hypr/windows.conf (520x260, centered)."
+    command -v hyprctl >/dev/null 2>&1 && hyprctl reload >/dev/null 2>&1 || true
+  fi
+
   cat <<EOF
 
-Optional: bind clipboard-launch to a key. Copy a link, hit the key, and omagrab
-opens with the URL pre-filled. Add to ~/.config/hypr/bindings.conf:
+Optional clipboard keybind: copy a link, hit the key, and omagrab opens with the
+URL pre-filled (it already floats — the rule above covers it). Add to
+~/.config/hypr/bindings.conf:
 
     bindd = SUPER SHIFT, V, omagrab, exec, xdg-terminal-exec --app-id=omagrab -e omagrab --clip
-
-and a floating rule to ~/.config/hypr/windows.conf (Hyprland >= 0.55):
-
-    windowrule = float on,     match:class ^(omagrab)\$
-    windowrule = center on,    match:class ^(omagrab)\$
-    windowrule = size 520 260, match:class ^(omagrab)\$
-
-then run 'hyprctl reload'.
 EOF
 fi
 

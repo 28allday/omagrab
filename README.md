@@ -43,8 +43,8 @@ sudo pacman -S yt-dlp ffmpeg wl-clipboard
 ## Install
 
 One line — pulls in `yt-dlp`, `ffmpeg` and `wl-clipboard` via pacman if they're
-missing, installs the binary to `~/.local/bin`, and (on Omarchy) adds a floating
-Walker entry:
+missing, installs the binary to `~/.local/bin`, and (on Omarchy) adds a Walker
+entry plus the Hyprland rule that makes omagrab float small and centered:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/28allday/omagrab/main/install.sh | bash
@@ -59,8 +59,8 @@ cd omagrab
 ./install.sh
 ```
 
-Make sure `~/.local/bin` is on your `PATH`. The installer prints the optional
-`SUPER+SHIFT+V` clipboard keybind for you to add.
+Make sure `~/.local/bin` is on your `PATH`. The installer also prints an optional
+`SUPER+SHIFT+V` clipboard keybind for you to add (see below).
 
 ## Usage
 
@@ -87,27 +87,25 @@ In the config view: `↑↓` move, `←→` change a value, `Esc` saves and retu
 > Single-letter commands (`c`, `d`, `q`) only act when the URL box is empty — so
 > they never get swallowed while you're typing or pasting a link.
 
-## Clipboard keybind (recommended)
+## Clipboard keybind (optional)
 
 The smoothest flow on Omarchy: copy a link in your browser, then summon omagrab as
 a floating window with the URL already filled in.
 
-Add to `~/.config/hypr/bindings.conf`:
+The installer already added the floating window rule (`omagrab` floats small and
+centered however it's launched), so all you need is the keybind. Add to
+`~/.config/hypr/bindings.conf`:
 
 ```ini
 bindd = SUPER SHIFT, V, omagrab, exec, xdg-terminal-exec --app-id=omagrab -e omagrab --clip
 ```
 
-And a floating rule in `~/.config/hypr/windows.conf` (Hyprland ≥ 0.55 syntax):
-
-```ini
-windowrule = float on,     match:class ^(omagrab)$
-windowrule = center on,    match:class ^(omagrab)$
-windowrule = size 520 260, match:class ^(omagrab)$
-```
-
 Reload Hyprland (`hyprctl reload`). Now: **copy a link → `SUPER+SHIFT+V` →
 omagrab floats with the URL ready → `Tab` to pick mode → `Enter`.**
+
+> Both the Walker entry and this keybind use the `omagrab` app-id, so the single
+> window rule the installer wrote to `~/.config/hypr/windows.conf` covers them
+> both. If you ever want to tweak the size, edit the `windowrule` block there.
 
 ## Configuration
 
